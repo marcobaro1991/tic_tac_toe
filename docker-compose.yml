@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  api:
+    build: ./
+    container_name: tic_tac_toe_api
+    restart: always
+    volumes:
+      - ./:/$PWD
+    links:
+      - "db"
+      - "redis"
+      - "rabbit"
+    environment:
+      APP_NAME: tic_tac_toe
+    ports:
+      - "4000:4000"
+    working_dir: $PWD
+    depends_on:
+      - db
+      - redis
+      - rabbit
+
+  db:
+    container_name: tic_tac_toe_postgres
+    image: postgres:14
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: tic_tac_toe
+      POSTGRES_PASSWORD: tic_tac_toe
+      POSTGRES_DB: tic_tac_toe
+
+  redis:
+    container_name: tic_tac_toe_redis
+    image: redis:alpine3.15
+    restart: always
+    ports:
+      - "56380:6379"
+
+  rabbit:
+    container_name: tic_tac_toe_rabbit
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "45673:15672"
+    environment:
+      RABBITMQ_DEFAULT_VHOST: tic_tac_toe
+      RABBITMQ_DEFAULT_USER: tic_tac_toe
+      RABBITMQ_DEFAULT_PASS: tic_tac_toe
+
+volumes: {}

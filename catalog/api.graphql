@@ -1,0 +1,104 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+}
+
+type CreateGameFailure {
+  error: GameCreatedError!
+}
+
+union CreateGameResponse = CreateGameFailure | CreateGameSuccess
+
+type CreateGameSuccess {
+  game: Game!
+}
+
+enum CreateMoveError {
+  CANT_UPDATE_STATUS
+  CANT_UPDATE_WINNER_AND_GAME_STATUS
+  GAME_DONE
+  GAME_NOT_FOUND
+  MOVE_NOT_SAVED
+  UNKNOWN
+  WRONG_PLAYER
+  WRONG_POSITION
+}
+
+type CreateMoveFailure {
+  error: CreateMoveError!
+  message: String!
+}
+
+union CreateMoveResponse = CreateMoveFailure | CreateMoveSuccess
+
+type CreateMoveSuccess {
+  playerHasWon: Boolean!
+}
+
+"""ISO8601 time"""
+scalar Datetime
+
+type Game {
+  identifier: Uuid!
+  insertedAt: Datetime!
+  moves: [Move]!
+  playerA: String!
+  playerB: String!
+  status: GameStatus!
+  title: String!
+  winner: String
+}
+
+enum GameCreatedError {
+  UNKNOWN
+}
+
+enum GameStatus {
+  DONE
+  PROGRESS
+}
+
+input InputGame {
+  playerA: String!
+  playerB: String!
+  title: String!
+}
+
+input InputMove {
+  gameIdentifier: Uuid!
+  player: String!
+  x: MoveX!
+  y: MoveY!
+}
+
+type Move {
+  identifier: Uuid!
+  insertedAt: Datetime!
+  player: String!
+  x: MoveX!
+  y: MoveY!
+}
+
+enum MoveX {
+  A
+  B
+  C
+}
+
+enum MoveY {
+  ONE
+  THREE
+  TWO
+}
+
+type RootMutationType {
+  createGame(game: InputGame!): CreateGameResponse!
+  createMove(move: InputMove!): CreateMoveResponse!
+}
+
+type RootQueryType {
+  game(identifier: Uuid!): Game
+}
+
+"""uuid v4 unique identifier"""
+scalar Uuid
