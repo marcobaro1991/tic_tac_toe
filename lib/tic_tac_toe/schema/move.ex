@@ -3,6 +3,8 @@ defmodule TicTacToe.Schema.Move do
 
   use Ecto.Schema
 
+  @type t() :: %__MODULE__{}
+
   import Ecto.Query
 
   schema "moves" do

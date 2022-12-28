@@ -151,14 +151,17 @@ defmodule TicTacToe.Application.Move do
       end)
 
     Enum.any?(@winnable_combinations, fn winnable_combination ->
-      Enum.all?(winnable_combination, fn winnable_position ->
-        position_found =
-          Enum.find(player_moves, fn player_position ->
-            player_position == winnable_position
-          end)
+      combination_found(winnable_combination, player_moves)
+    end)
+  end
 
-        nil != position_found
-      end)
+  @spec combination_found(list(), list()) :: boolean()
+  defp combination_found(winnable_combination, player_moves) do
+    Enum.all?(winnable_combination, fn winnable_position ->
+      nil !=
+        Enum.find(player_moves, fn player_position ->
+          player_position == winnable_position
+        end)
     end)
   end
 
